@@ -1,29 +1,49 @@
-﻿import { Controller, Get, Post, Delete, Body, Res, Param } from '@nestjs/common';
+﻿import {Controller, Get, Post, Delete, Body, Res, Param, HttpStatus} from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './user.schema';
 
-@Controller('users')
+@Controller('api')
 export class UserController {
     constructor(private readonly userService: UserService) {}
-
-    @Post('api/users')
-    createUser(@Body() user: User) {
-        return this.userService.createUser(user);
+    
+    @Post('users')
+    async createUser(@Res() response, @Body() user: User) {
+        const createdUser = await this.userService.createUser(user);
+        return response.status(HttpStatus.OK).json({
+            createdUser
+        })
     }
 
-    @Get(`api/user/:id`)
-    getUser(@Res() response, @Param('id') id) {
-        return this.userService.getUser(id);
+    @Get(`user/:id`)
+    async getUser(@Res() response, @Param('id') id) {
+        const user = await this.userService.getUser(id);
+        return response.status(HttpStatus.OK).json({
+            user
+        })
+    }
+    
+    @Get(`allUsers`)
+    async getAll(@Res() response) {
+        const users = await this.userService.getAll();
+        return response.status(HttpStatus.OK).json({
+            users
+        })
     }
 
-    @Get('api/user/:id/avatar')
-    getUserAvatar(@Res() response, @Param('id') id) {
-        return this.userService.getUserAvatar(id);
+    @Get('user/:id/avatar')
+    async getUserAvatar(@Res() response, @Param('id') id) {
+        const avatar = await this.userService.getUserAvatar(id);
+        return response.status(HttpStatus.OK).json({
+            avatar
+        })
     }
 
-    @Delete('api/user/:id/avatar')
-    deleteUserAvatar(@Res() response, @Param('id') id) {
-        return this.userService.deleteUserAvatar(id);
+    @Delete('user/:id/avatar')
+    async deleteUserAvatar(@Res() response, @Param('id') id) {
+        const user = await this.userService.deleteUserAvatar(id);
+        return response.status(HttpStatus.OK).json({
+            user
+        })
     }
 
 }
